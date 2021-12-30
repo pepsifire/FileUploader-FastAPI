@@ -1,0 +1,1 @@
+DEFAULT_AUTH = "{\"AUTH_KEY\": \"AUTH_KEY_HERE\"}"
