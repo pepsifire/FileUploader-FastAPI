@@ -42,7 +42,9 @@ def validateConfiguration():
 
         try:
             with open(CONFIG_PATH+CONFIG_AUTH, 'r') as f:
-                json.loads(f.read())
+                content = json.loads(f.read())
+                creds.username = content['USERNAME']
+                creds.password = content['PASSWORD']
             print("Configuration validation successful")
         except Exception as err:
             raise InvalidJSON(f"The configuration file {f} is invalid!" + err)
