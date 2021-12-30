@@ -3,17 +3,17 @@ from fastapi.security import HTTPBasicCredentials, HTTPBasic
 import secrets
 from util.CustomException import ConfigurationValidationError, InvalidJSON
 from util.defaultConfig import DEFAULT_AUTH
+from util import credentialStore, envVars
 from config.vars import *
 import json
 import os
 
 security = HTTPBasic()
+creds = credentialStore.credentailStore()
 
 async def checkCredentails(credentials: HTTPBasicCredentials = Depends(security)):
-    with open(CONFIG_PATH+CONFIG_AUTH, 'r') as f:
-            content = json.loads(f.read())
-            correct_username = secrets.compare_digest(credentials.username, content['USERNAME'])
-            correct_password = secrets.compare_digest(credentials.password, content['PASSWORD'])
+    correct_username = secrets.compare_digest(credentials.username, creds.username)
+    correct_password = secrets.compare_digest(credentials.password, creds.password)
     if correct_username and correct_password:
         return True
     else:
@@ -28,17 +28,22 @@ async def uploadFile(file: UploadFile = File(...)):
     with open(UPLOAD_PATH+file.filename, 'wb') as f:
         f.write(content)
 
-def validateConfiguration() -> Exception:
-    if not os.path.exists(CONFIG_PATH+CONFIG_AUTH):
-        os.makedirs(CONFIG_PATH, exist_ok=True)
-        with open(CONFIG_PATH+CONFIG_AUTH, 'w') as f:
-            f.write(DEFAULT_AUTH)
-        raise ConfigurationValidationError("Configuration created. Please configure them!")
+def validateConfiguration():
+    if envVars.checkEnvirontmentVariables():
+        print("Loading configuration from environment variables")
+        creds.username = envVars.getUsername()
+        creds.password = envVars.getPassword()
+    else:
+        if not os.path.exists(CONFIG_PATH+CONFIG_AUTH):
+            os.makedirs(CONFIG_PATH, exist_ok=True)
+            with open(CONFIG_PATH+CONFIG_AUTH, 'w') as f:
+                f.write(DEFAULT_AUTH)
+            raise ConfigurationValidationError("Configuration created. Please configure them!")
 
-    try:
-        with open(CONFIG_PATH+CONFIG_AUTH, 'r') as f:
-            json.loads(f.read())
-        print("Configuration validation successful")
-    except Exception as err:
-        raise InvalidJSON(f"The configuration file {f} is invalid!" + err)
+        try:
+            with open(CONFIG_PATH+CONFIG_AUTH, 'r') as f:
+                json.loads(f.read())
+            print("Configuration validation successful")
+        except Exception as err:
+            raise InvalidJSON(f"The configuration file {f} is invalid!" + err)
 
