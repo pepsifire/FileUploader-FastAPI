@@ -1,11 +1,12 @@
 from fastapi import FastAPI, File, UploadFile, Depends
+from fastapi.staticfiles import StaticFiles
 from config.vars import *
 import os
 from util.misc import *
 
 
 app = FastAPI()
-
+app.mount(IMAGE_DIR, StaticFiles(directory=UPLOAD_PATH), name=IMAGE_DIR)
 
 @app.get("/")
 async def index():
@@ -18,7 +19,7 @@ async def upload(file: UploadFile = File(...), authorized = Depends(checkCredent
         return {"message": ERROR_UNALLOWED_CONTENT}
     if authorized:
         await uploadFile(file)
-        return {"filename": file.filename}
+        return {"url": URL_PATH+IMAGE_DIR+file.filename}
 
 
 @app.on_event("startup")
