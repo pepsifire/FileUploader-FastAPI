@@ -1,5 +1,3 @@
-
-
 class InvalidJSON(Exception):
     pass
 

@@ -14,7 +14,7 @@ async def index():
 
 
 @app.post("/upload")
-async def upload(file: UploadFile = File(...), authorized = Depends(checkCredentails)):
+async def upload(file: UploadFile = File(...), authorized = Depends(checkCredentials)):
     if file.content_type not in ALLOWED_CONTENT:
         return {"message": ERROR_UNALLOWED_CONTENT}
     if authorized:
