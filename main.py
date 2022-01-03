@@ -1,6 +1,6 @@
 from fastapi import FastAPI, File, UploadFile, Depends
 from fastapi.staticfiles import StaticFiles
-from util.config import configuation
+from util.config import configuration
 import os
 from util.misc import *
 
