@@ -1,6 +1,6 @@
 import os
 
-def checkEnvirontmentVariables() -> bool:
+def getAuthFromEnv() -> bool:
     """Check stuff from the environment variables"""
     username = os.getenv('auth_user', None)
     password = os.getenv('auth_password', None)
@@ -8,6 +8,8 @@ def checkEnvirontmentVariables() -> bool:
         return False
     return True
 
+def getBaseUrl() -> str:
+    return os.getenv('base_url', None)
 
 def getUsername() -> str:
     return os.getenv('auth_user')

@@ -3,13 +3,13 @@ from fastapi.security import HTTPBasicCredentials, HTTPBasic
 import secrets
 from util.CustomException import ConfigurationValidationError, InvalidJSON
 from util.defaultConfig import DEFAULT_AUTH
-from util import credentialStore, envVars
-from config.vars import *
+from util import credentialStore, envVars, config
 import json
 import os
 
 security = HTTPBasic()
 creds = credentialStore.credentailStore()
+configuration = config.configuration()
 
 async def checkCredentials(credentials: HTTPBasicCredentials = Depends(security)):
     correct_username = secrets.compare_digest(credentials.username, creds.username)
@@ -25,23 +25,25 @@ async def checkCredentials(credentials: HTTPBasicCredentials = Depends(security)
 
 async def uploadFile(file: UploadFile = File(...)):
     content = await file.read()
-    with open(UPLOAD_PATH+file.filename, 'wb') as f:
+    with open(configuration.UPLOAD_PATH+file.filename, 'wb') as f:
         f.write(content)
 
 def validateConfiguration():
-    if envVars.checkEnvirontmentVariables():
+    if envVars.getBaseUrl() is not None:
+        configuration.BASE_URL = envVars.getBaseUrl()
+    if envVars.getAuthFromEnv():
         print("Loading configuration from environment variables")
         creds.username = envVars.getUsername()
         creds.password = envVars.getPassword()
     else:
-        if not os.path.exists(CONFIG_PATH+CONFIG_AUTH):
-            os.makedirs(CONFIG_PATH, exist_ok=True)
-            with open(CONFIG_PATH+CONFIG_AUTH, 'w') as f:
+        if not os.path.exists(configuration.CONFIG_PATH+configuration.CONFIG_AUTH):
+            os.makedirs(configuration.CONFIG_PATH, exist_ok=True)
+            with open(configuration.CONFIG_PATH+configuration.CONFIG_AUTH, 'w') as f:
                 f.write(DEFAULT_AUTH)
             raise ConfigurationValidationError("Configuration created. Please configure them!")
 
         try:
-            with open(CONFIG_PATH+CONFIG_AUTH, 'r') as f:
+            with open(configuration.CONFIG_PATH+configuration.CONFIG_AUTH, 'r') as f:
                 content = json.loads(f.read())
                 creds.username = content['USERNAME']
                 creds.password = content['PASSWORD']

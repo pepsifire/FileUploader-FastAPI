@@ -1,12 +1,12 @@
 from fastapi import FastAPI, File, UploadFile, Depends
 from fastapi.staticfiles import StaticFiles
-from config.vars import *
+from util.config import configuation
 import os
 from util.misc import *
 
 
 app = FastAPI()
-app.mount(IMAGE_DIR, StaticFiles(directory=UPLOAD_PATH), name=IMAGE_DIR)
+app.mount(configuration.IMAGE_DIR, StaticFiles(directory=configuration.UPLOAD_PATH), name=configuration.IMAGE_DIR)
 
 @app.get("/")
 async def index():
@@ -15,11 +15,11 @@ async def index():
 
 @app.post("/upload")
 async def upload(file: UploadFile = File(...), authorized = Depends(checkCredentials)):
-    if file.content_type not in ALLOWED_CONTENT:
-        return {"message": ERROR_UNALLOWED_CONTENT}
+    if file.content_type not in configuration.ALLOWED_CONTENT:
+        return {"message": configuration.ERROR_UNALLOWED_CONTENT}
     if authorized:
         await uploadFile(file)
-        return {"url": URL_PATH+IMAGE_DIR+file.filename}
+        return {"url": configuration.BASE_URL+configuration.IMAGE_DIR+file.filename}
 
 
 @app.on_event("startup")
@@ -28,7 +28,7 @@ def startup():
     validateConfiguration()
         
     # Create upload directory if it doesn't exist
-    if not os.path.exists(UPLOAD_PATH):
-        os.makedirs(UPLOAD_PATH)
-        print(f"Created {UPLOAD_PATH}")
+    if not os.path.exists(configuration.UPLOAD_PATH):
+        os.makedirs(configuration.UPLOAD_PATH)
+        print(f"Created {configuration.UPLOAD_PATH}")
 
