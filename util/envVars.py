@@ -1,4 +1,5 @@
 import os
+from typing import List
 
 def getAuthFromEnv() -> bool:
     """Check stuff from the environment variables"""
@@ -16,3 +17,6 @@ def getUsername() -> str:
 
 def getPassword() -> str:
     return os.getenv('auth_password')
+
+def getAllowedContentTypes() -> List[str]:
+    return os.getenv('allowed_content_types', None)

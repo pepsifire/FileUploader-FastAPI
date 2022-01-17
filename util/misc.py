@@ -29,6 +29,8 @@ async def uploadFile(file: UploadFile = File(...)):
         f.write(content)
 
 def validateConfiguration():
+    if envVars.getAllowedContentTypes() is not None:
+        configuration.ALLOWED_CONTENT = envVars.getAllowedContentTypes()
     if envVars.getBaseUrl() is not None:
         configuration.BASE_URL = envVars.getBaseUrl()
     if envVars.getAuthFromEnv():
@@ -48,6 +50,7 @@ def validateConfiguration():
                 creds.username = content['USERNAME']
                 creds.password = content['PASSWORD']
             print("Configuration validation successful")
+            print(configuration.ALLOWED_CONTENT)
         except Exception as err:
             raise InvalidJSON(f"The configuration file {f} is invalid!" + err)
 
