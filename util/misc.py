@@ -11,6 +11,7 @@ security = HTTPBasic()
 creds = credentialStore.credentailStore()
 configuration = config.configuration()
 
+
 async def checkCredentials(credentials: HTTPBasicCredentials = Depends(security)):
     correct_username = secrets.compare_digest(credentials.username, creds.username)
     correct_password = secrets.compare_digest(credentials.password, creds.password)

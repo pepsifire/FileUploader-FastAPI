@@ -5,7 +5,7 @@
 
 ## Todo
 - [x] Make allowed content modifiable via environment variables
-- [ ] Toggleable random filenames
+- [x] Toggleable random filenames
 - [ ] File deletion
 - [ ] Admin menu (File deletion)
 

@@ -9,4 +9,5 @@ class configuration():
     ALLOWED_CONTENT = ['image/jpeg', 'image/png', 'image/gif']
     ERROR_UNALLOWED_CONTENT = "CONTENT TYPE IS NOT ALLOWED"
     BASE_URL = 'http://localhost:8000'
-    IMAGE_DIR= '/media/'
+    IMAGE_DIR = '/media/'
+    RANDOMIZED_FILENAMES = True
