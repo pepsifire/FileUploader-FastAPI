@@ -5,9 +5,7 @@ from util.config import configuration
 import os
 from util.misc import *
 from util.filenameGenerator import filenameGenerator
-from util.config import configuration
 
-configuration = config.configuration()
 
 app = FastAPI()
 app.mount(configuration.IMAGE_DIR, StaticFiles(directory=configuration.UPLOAD_PATH), name=configuration.IMAGE_DIR)
