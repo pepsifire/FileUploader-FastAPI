@@ -16,7 +16,8 @@ async def index():
 
 @app.post("/upload")
 async def upload(file: UploadFile = File(...), authorized = Depends(checkCredentials)):
-    if len(file.filename.split('.')) == 1: # Guess the extension if there is none
+    _filename_len = len(file.filename.split('.'))
+    if _filename_len == 1: # Guess the extension if there is none
         _file = await file.read()
         guessExt = util.extensionSolver.guessFileExtension(_file)
         guessMime = util.extensionSolver.guessMime(_file)
@@ -27,7 +28,7 @@ async def upload(file: UploadFile = File(...), authorized = Depends(checkCredent
         return {"error": configuration.ERROR_UNALLOWED_CONTENT}
     if authorized:
         if configuration.RANDOMIZED_FILENAMES:
-            _extension = file.filename.split('.')[1].lower() # Save the extension of the file for upload
+            _extension = file.filename.split('.')[_filename_len -1].lower() # Save the extension of the file for upload
             print(_extension)
             file.filename = filenameGenerator.generateName(5) +f".{_extension}"
         await uploadFile(file)
