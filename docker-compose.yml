@@ -10,3 +10,4 @@ services:
       - auth_user=${auth_user}
       - auth_password=${auth_password}
       - base_url=${base_url}
+      - allowed_content_types=${allowed_content_types}
